@@ -20,26 +20,23 @@
 
 #ifndef RGBIMAGE_H
 #define RGBIMAGE_H
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 #include <stdio.h>
 #include <assert.h>
 
-// Include the next line to turn off the routines that use OpenGL
-// #define RGBIMAGE_DONT_USE_OPENGL
+ // Include the next line to turn off the routines that use OpenGL
+ // #define RGBIMAGE_DONT_USE_OPENGL
 
 class RgbImage
 {
 public:
 	RgbImage();
-	RgbImage( const char* filename );
-	RgbImage( int numRows, int numCols );	// Initialize a blank bitmap of this size.
+	RgbImage(const char* filename);
+	RgbImage(int numRows, int numCols);	// Initialize a blank bitmap of this size.
 	~RgbImage();
 
-	bool LoadBmpFile( const char *filename );		// Loads the bitmap from the specified file
-	bool WriteBmpFile( const char* filename );		// Write the bitmap to the specified file
+	bool LoadBmpFile(const char* filename);		// Loads the bitmap from the specified file
+	bool WriteBmpFile(const char* filename);		// Write the bitmap to the specified file
 #ifndef RGBIMAGE_DONT_USE_OPENGL
 	bool LoadFromOpenglBuffer();					// Load the bitmap from the current OpenGL buffer
 #endif
@@ -47,17 +44,17 @@ public:
 	long GetNumRows() const { return NumRows; }
 	long GetNumCols() const { return NumCols; }
 	// Rows are word aligned
-	long GetNumBytesPerRow() const { return ((3*NumCols+3)>>2)<<2; }	
+	long GetNumBytesPerRow() const { return ((3 * NumCols + 3) >> 2) << 2; }
 	const void* ImageData() const { return (void*)ImagePtr; }
 
-	const unsigned char* GetRgbPixel( long row, long col ) const;
-	unsigned char* GetRgbPixel( long row, long col );
-	void GetRgbPixel( long row, long col, float* red, float* green, float* blue ) const;
-	void GetRgbPixel( long row, long col, double* red, double* green, double* blue ) const;
+	const unsigned char* GetRgbPixel(long row, long col) const;
+	unsigned char* GetRgbPixel(long row, long col);
+	void GetRgbPixel(long row, long col, float* red, float* green, float* blue) const;
+	void GetRgbPixel(long row, long col, double* red, double* green, double* blue) const;
 
-	void SetRgbPixelf( long row, long col, double red, double green, double blue );
-	void SetRgbPixelc( long row, long col, 
-					   unsigned char red, unsigned char green, unsigned char blue );
+	void SetRgbPixelf(long row, long col, double red, double green, double blue);
+	void SetRgbPixelc(long row, long col,
+		unsigned char red, unsigned char green, unsigned char blue);
 
 	// Error reporting. (errors also print message to stderr)
 	int GetErrorCode() const { return ErrorCode; }
@@ -69,7 +66,7 @@ public:
 		ReadError = 4,			// End of file reached prematurely
 		WriteError = 5			// Unable to write out data (or no date to write out)
 	};
-	bool ImageLoaded() const { return (ImagePtr!=0); }  // Is an image loaded?
+	bool ImageLoaded() const { return (ImagePtr != 0); }  // Is an image loaded?
 
 	void Reset();			// Frees image data memory
 
@@ -79,75 +76,75 @@ private:
 	long NumCols;				// number of columns in image
 	int ErrorCode;				// error code
 
-	static short readShort( FILE* infile );
-	static long readLong( FILE* infile );
-	static void skipChars( FILE* infile, int numChars );
-	static void writeLong( long data, FILE* outfile );
-	static void writeShort( short data, FILE* outfile );
-	
-	static unsigned char doubleToUnsignedChar( double x );
+	static short readShort(FILE* infile);
+	static long readLong(FILE* infile);
+	static void skipChars(FILE* infile, int numChars);
+	static void writeLong(long data, FILE* outfile);
+	static void writeShort(short data, FILE* outfile);
+
+	static unsigned char doubleToUnsignedChar(double x);
 
 };
 
 inline RgbImage::RgbImage()
-{ 
-	NumRows = 0;
-	NumCols = 0;
-	ImagePtr = 0;
-	ErrorCode = 0;
-}
-
-inline RgbImage::RgbImage( const char* filename )
 {
 	NumRows = 0;
 	NumCols = 0;
 	ImagePtr = 0;
 	ErrorCode = 0;
-	LoadBmpFile( filename );
+}
+
+inline RgbImage::RgbImage(const char* filename)
+{
+	NumRows = 0;
+	NumCols = 0;
+	ImagePtr = 0;
+	ErrorCode = 0;
+	LoadBmpFile(filename);
 }
 
 inline RgbImage::~RgbImage()
-{ 
+{
 	delete[] ImagePtr;
 }
 
 // Returned value points to three "unsigned char" values for R,G,B
-inline const unsigned char* RgbImage::GetRgbPixel( long row, long col ) const
+inline const unsigned char* RgbImage::GetRgbPixel(long row, long col) const
 {
-	assert ( row<NumRows && col<NumCols );
+	assert(row < NumRows&& col < NumCols);
 	const unsigned char* ret = ImagePtr;
-	long i = row*GetNumBytesPerRow() + 3*col;
+	long i = row * GetNumBytesPerRow() + 3 * col;
 	ret += i;
 	return ret;
 }
 
-inline unsigned char* RgbImage::GetRgbPixel( long row, long col ) 
+inline unsigned char* RgbImage::GetRgbPixel(long row, long col)
 {
-	assert ( row<NumRows && col<NumCols );
+	assert(row < NumRows&& col < NumCols);
 	unsigned char* ret = ImagePtr;
-	long i = row*GetNumBytesPerRow() + 3*col;
+	long i = row * GetNumBytesPerRow() + 3 * col;
 	ret += i;
 	return ret;
 }
 
-inline void RgbImage::GetRgbPixel( long row, long col, float* red, float* green, float* blue ) const
+inline void RgbImage::GetRgbPixel(long row, long col, float* red, float* green, float* blue) const
 {
-	assert ( row<NumRows && col<NumCols );
-	const unsigned char* thePixel = GetRgbPixel( row, col );
-	const float f = 1.0f/255.0f;
-	*red = f*(float)(*(thePixel++));
-	*green = f*(float)(*(thePixel++));
-	*blue = f*(float)(*thePixel);
+	assert(row < NumRows&& col < NumCols);
+	const unsigned char* thePixel = GetRgbPixel(row, col);
+	const float f = 1.0f / 255.0f;
+	*red = f * (float)(*(thePixel++));
+	*green = f * (float)(*(thePixel++));
+	*blue = f * (float)(*thePixel);
 }
 
-inline void RgbImage::GetRgbPixel( long row, long col, double* red, double* green, double* blue ) const
+inline void RgbImage::GetRgbPixel(long row, long col, double* red, double* green, double* blue) const
 {
-	assert ( row<NumRows && col<NumCols );
-	const unsigned char* thePixel = GetRgbPixel( row, col );
-	const double f = 1.0/255.0;
-	*red = f*(double)(*(thePixel++));
-	*green = f*(double)(*(thePixel++));
-	*blue = f*(double)(*thePixel);
+	assert(row < NumRows&& col < NumCols);
+	const unsigned char* thePixel = GetRgbPixel(row, col);
+	const double f = 1.0 / 255.0;
+	*red = f * (double)(*(thePixel++));
+	*green = f * (double)(*(thePixel++));
+	*blue = f * (double)(*thePixel);
 }
 
 inline void RgbImage::Reset()
@@ -160,4 +157,4 @@ inline void RgbImage::Reset()
 }
 
 
-#endif // RGBIMAGE_H
+#endif // RGBIMAGE_H#pragma once
