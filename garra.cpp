@@ -23,6 +23,7 @@ float diameterCylinder = 0.3;
 float diameterSphere = 0.4;
 float sizeArm = 4.5;
 float sizeForearm = 3.0;
+float sizeHead= 10.0;
 float sizeHand = 2.0;
 float sizeClampPart = 1.0;
 float diameterBase = 2.0;
@@ -37,6 +38,8 @@ float viewAngleZ = 15.0;
 
 float angleArm = 90.0;
 float angleForearm = 90.0;
+float angleForearmE = 90.0;
+float angleHead = 90.0;
 float angleHand = 0.0;
 float angleClampZ = 0.0;
 float angleClampY = 0.0;
@@ -213,7 +216,11 @@ void drawScene(void) {
 
 	//draws the arm
 	drawCylinder(diameterCylinder, sizeArm);
+		
+	
 
+	
+	
 	// move to forearm referential
 	glTranslatef(0.0f, 0.0f, sizeArm + diameterSphere / 5);
 	glRotatef(angleForearm, 0.0f, 1.0f, 0.0f);
@@ -222,7 +229,7 @@ void drawScene(void) {
 	drawSphere(diameterSphere);
 	glTranslatef(0.0f, 0.0f, diameterSphere / 5);
 	drawCylinder(diameterCylinder, sizeForearm);
-
+	
 	//move to clamp referential
 	glTranslatef(0.0f, 0.0f, sizeForearm + diameterSphere / 5);
 	glRotatef(angleClampZ, 0.0f, 0.0f, 1.0f);
@@ -232,7 +239,8 @@ void drawScene(void) {
 	glTranslatef(0.0f, 0.0f, diameterSphere / 2);
 
 	glPushMatrix();
-
+	
+	
 	//draws top part of clamp
 	glRotatef(angleClampY + 60, 0.0f, 1.0f, 0.0f);
 
@@ -273,7 +281,14 @@ void drawScene(void) {
 	drawCone(diameterCylinder / 3, sizeClampPart);
 
 	glPopMatrix();
-
+	
+	glPushMatrix();
+	//draws the head
+	glTranslatef(-1.8f, 0.0f, -3.5f);
+	
+	drawSphere(diameterSphere+1);
+	
+	glPopMatrix();
 	glutSwapBuffers();
 }
 
